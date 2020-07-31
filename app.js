@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3000
+var port=process.env.PORT||8080;
 const path = require('path')
 var https = require('https');
 var bodyParser = require('body-parser')
@@ -48,4 +48,5 @@ app.get('/', (req, res) =>{
 
 })
 */
+
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
