@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    title= title
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel='stylesheet', href='https://www.w3schools.com/w3css/4/w3.css')
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+    link(rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet")
+
+
+  body(class="bgimg2" style="background:#c2d6d6")
+    div(class="w3-bar w3-white w3-opacity-min")
+        a(href="/",class="w3-bar-item w3-button w3-mobile") Homepage
+        a(href="/liedje",class="w3-bar-item w3-button w3-mobile") Stem hier       
+        a(href="/liedje/top-10",class="w3-bar-item w3-button w3-mobile") Top 10
+        if user
+            a(href="/users/account",class="w3-bar-item w3-button w3-mobile") #{user.name}
+            a(href="/users/logout",class="w3-bar-item w3-button w3-mobile") Logout
+        else
+            a(href="/users/login",class="w3-bar-item w3-button w3-mobile ") Log in
+            a(href="/users/register",class="w3-bar-item w3-button w3-mobile") Registreer
+    script(type="text/javascript" src="flash/flash-client.js")
+    
+  .container
+  block content
+footer(style="float:bottom", class="w3-center") 2020 Copyright:
+  a(href="https://chiroludiek.be/") Robbe Ipers

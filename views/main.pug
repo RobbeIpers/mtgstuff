@@ -1,0 +1,25 @@
+extends layout
+block content
+    div.col-md-4
+        div(style="text-align:center")
+            h1 Price: #{prijs1}
+        div(style="text-align:center")
+            img(src=img, style="margin-right:10%")
+    div.col-md-4
+        div(style="text-align:center")
+            h1 Price: ????
+        img(src=img2)
+    form(method='post', action='')
+        div.col-md-4
+            div(style="margin-top:25%")
+                h2 Score : #{score}
+            div
+                h2 Highscore : #{highscore}
+            div
+                input(type="radio",id="high", name="high", value="1", checked="checked")
+                b   Higher
+            div
+                input(type="radio", id="high",name="high", value="0",checked=high=="0")
+                b  Lower
+            div(style="margin-left:75%")    
+                button.btn.btn-primary(class='w3-button w3-white w3-border w3-border-red w3-round',type='submit',allign="center", value="Lager") Submit
