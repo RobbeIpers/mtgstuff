@@ -5,9 +5,11 @@ var https = require('https');
 var nextCard;
 var score=0;
 var bigsmal;
+var prijs =0;
 var validator = require("express-validator");
 const { validationResult, body } = require('express-validator');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+const { json } = require('body-parser');
 var highscore=0;
 //app.use(random_card);
 random_card =(req, res, next )=>{
@@ -26,11 +28,53 @@ random_card =(req, res, next )=>{
 };
 
  
+function getCard(res){
 
-exports.post =[ 
+    https.get("https://api.scryfall.com/cards/random?q=usd>%3D10+not%3Apromo", function(response) {
+        var responses="";
 
-   validator.body('high', 'Keuze aan duiden').trim().isLength({ min: 1 }),
+        response.on('data', function(chunk){
+            responses+=(chunk);
+            
+        });
+        response.on('end', function(){
+            newCard = JSON.parse(responses);
+            var newPrijs = newCard.prices.usd;
+            if(newCard.prices.usd==null){
+                if(newCard.prices.usd_foil==null){
+                    if(newCard.prices.eur==null){
+                        console.log(newCard)
+                        getCard(res);
+                        return;
+                    }
+                    newPrijs=newCard.prices.eur*1,18;
+                }
+                newPrijs=newCard.prices.usd_foil;
+            }
+            
+            if(prijs <= newPrijs){
+                bigsmal=1;
+            }
+            else{
+                bigsmal=0;
+            }
+            console.log("old: "+ prijs+", "+ "new: "+newPrijs+ "bigsmal: "+ bigsmal);
+   
+            var temp=nextCard;
+            nextCard=newCard;
+            
+            if(score>highscore){highscore=score;}
+
+            res.render('main',{img : temp.image_uris.normal,img2 :nextCard.image_uris.normal, prijs1:prijs, score:score, highscore:highscore});
+            prijs=newPrijs;
+
+        });
+    }); 
+};
     
+
+
+exports.post =[     
     (req,res,next)=>{
         var title="fout";
         const errors = validationResult(req);
@@ -50,35 +94,7 @@ exports.post =[
             res.flash('Je had het fout', 'error');
             score=0;
         }
-        https.get("https://api.scryfall.com/cards/random?q=usd>%3D10+not%3Apromo", function(response) {
-                    
-            var responses="";
-
-            response.on('data', function(chunk){
-                responses+=(chunk);
-                
-            });
-
-            response.on('end', function(){
-                json=JSON.parse(responses);
-                if(nextCard.prices.usd<=json.prices.usd){
-                    bigsmal=1;
-                }
-                else{
-                    bigsmal=0;
-                }
-                var temp=nextCard;
-                nextCard=json;
-                var prijs =temp.prices.usd;
-                if(prijs==null){
-                    prijs=json.prices.eur*1,18
-                }
-                prijs+=" $"
-                if(score>highscore){highscore=score;}
-                res.render('main',{img : temp.image_uris.normal,img2 :nextCard.image_uris.normal, prijs1:prijs, score:score, highscore:highscore});
-            })
-        }); 
-    }
+        getCard(res);}
 } 
 ];
 exports.index = function(req, response) {
@@ -94,7 +110,6 @@ exports.index = function(req, response) {
 
             res.on('data', function(chunk){
                 responses+=(chunk);
-               
               });
       
            res.on('end', function(){
@@ -102,19 +117,18 @@ exports.index = function(req, response) {
             bodies.push(responses)
                //console.log("ended"+completed_requests);
                 if (completed_requests++ ==  1) {
-                    json=JSON.parse(bodies[0]);
+                    json1=JSON.parse(bodies[0]);
                     json2=JSON.parse(bodies[1]);
-                    if(json.prices.usd<=json2.prices.usd){
+                    if(json1.prices.usd<=json2.prices.usd){
                         bigsmal=1;
                     }
                     else{
                         bigsmal=0;
                     }
                     nextCard=json2;
-                    var prijs =json.prices.usd;
-                    if(prijs==null){prijs=json.prices.eur*1,18}
-                    prijs+=" $"
-                    response.render('main',{img : json.image_uris.normal,img2 :json2.image_uris.normal, prijs1:prijs, score:0});
+                    prijs =json1.prices.usd;
+                    if(prijs==null){prijs=json1.prices.eur*1,18}
+                    response.render('main',{img : json1.image_uris.normal,img2 :json2.image_uris.normal, prijs1:prijs, score:0});
                 }
             });
         });    
