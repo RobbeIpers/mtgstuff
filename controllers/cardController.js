@@ -129,6 +129,7 @@ exports.index = function(req, response) {
                     prijs =json1.prices.usd;
                     if(prijs==null){prijs=json1.prices.eur*1,18}
                     response.render('main',{img : json1.image_uris.normal,img2 :json2.image_uris.normal, prijs1:prijs, score:0});
+                    prijs = json2.prices.usd;
                 }
             });
         });    
